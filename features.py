@@ -1,21 +1,28 @@
 import numpy as np
 import scipy as sp
-import features as features
     
 class sample:
     def __init__(self,filename):
         self.filename = filename
         self.type = self.__computa_tipo_de_sinal()
         self.ts = sp.fromfile(open(filename), dtype = sp.float32)
-        self.centered_and_normalized = features.center_and_normalize(self.ts)
+        self.centered_and_normalized = self.__compute_center_and_normalize()
         #self.standard_deviation = self.__compute_standard_deviation()
-        self.inst_freq = features.inst_freq(self.ts)
+        self.inst_freq = self.__compute_inst_freq()
         
-        self.gamma_max = features.gamma_max(self.ts)
+        self.gamma_max = self.__compute_gamma_max()
         self.sigma_af = self.__compute_sigma_af()
         self.sigma_aa = self.__compute_sigma_aa()
         self.sigma_dp = self.__compute_sigma_dp()
         self.sigma_ap = self.__compute_sigma_ap()
+
+    ### Eq 5.2
+    def __compute_center_and_normalize(self):
+        """Centrar e normalizar"""
+        mi_A = np.mean(self.ts) # Eq 5.3
+        A_c = self.ts - mi_A
+        A_cn = A_c / max(np.abs(A_c))
+        return A_cn    
 
 
     ### Eq 5.1
